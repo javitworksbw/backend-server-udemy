@@ -1,7 +1,15 @@
 // modelo para la coleccion usuarios
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
-const userSchema = new mongoose.Schema({
+//
+const rolesValidos = {
+    values: [ 'ADMIN_ROLE', 'USER_ROLE'],
+    message: '{VALUE} no es un role permitido'
+};
+
+
+const usuarioSchema = new mongoose.Schema({
     nombre: {
         type: String,
         required: [true, 'El nombre es necesario']
@@ -22,11 +30,15 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
-        default: 'USER_ROLE'
+        default: 'USER_ROLE',
+        enum: rolesValidos
     }
 
 });
 
+// add a validator 
+usuarioSchema.plugin( uniqueValidator , { message: 'El {PATH} debe ser unico'});
+
 // User model based on userSchema
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('usuarios', usuarioSchema);
 

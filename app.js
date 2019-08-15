@@ -1,10 +1,26 @@
 // Requires
 const express = require('express');
 const mongoose = require('mongoose');
-
+const bodyParser = require('body-parser');
 
 // initializes variables
 const app = express();
+
+
+
+// Middlewares
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
+
+
+// import routes
+const appRoutes     = require('./routes/app');
+const usuarioRoutes = require('./routes/usuario');
+const loginRoutes   = require('./routes/login');
+
 
 
 // Conexion a la base de datos
@@ -22,15 +38,13 @@ db.once('open', function() {
 });
 
 
+
+
 // Routes
-app.get( '/', (req, res, next ) => {
+app.use('/usuario'      , usuarioRoutes         );
+app.use('/login'        , loginRoutes           );
+app.use('/'             , appRoutes             );
 
-    res.status(200).json({
-        ok: true , 
-        message: 'Success Request'
-    });
-
-});
 
 
 // Listen for request
