@@ -157,6 +157,9 @@ app.get( '/:id', mdAuth.auth_verify_token, (req, res ) => {
             });    
         }
 
+        // hides the password
+        usuarioEncontrado.password = ':)';
+
         // http successfull code  (200)
         res.status(200).json({
             ok: true , 
