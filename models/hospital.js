@@ -14,12 +14,12 @@ const hospitalSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    usuario: { type: Schema.Types.ObjectId, ref: 'usuarios' }
+    usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'usuarios' }
     
 }, { collection: 'hospitales'});
 
 // add a validator 
-usuarioSchema.plugin( uniqueValidator , { message: 'El {PATH} debe ser unico'});
+hospitalSchema.plugin( uniqueValidator , { message: 'El {PATH} debe ser unico'});
 
 // User model based on hospitalSchema
 module.exports = mongoose.model('hospital', hospitalSchema);

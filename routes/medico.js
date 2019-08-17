@@ -6,53 +6,52 @@ const corsOptions           = require('../middlewares/corsOptions');
 const app = express();
 
 
-// Hospital model
-const Hospital = require('../models/hospital');
+// Medico model
+const Medico = require('../models/medico');
 
 // ==========================================================
-// GET /hospital    ( obtener todos los hospitales )
+// GET /medico    ( obtener todos los medicos )
 // ==========================================================
 app.get( '/', cors(corsOptions), (req, res ) => {
 
 
     // Usando el modelo de mongoose
-    Hospital.find({ }, 'nombre img usuario' )
+    Medico.find({ }, 'nombre img usuario hospital' )
     .exec(
-            (err, hospitales)=> {
+            (err, medicos)=> {
                 
                 if ( err ) {
                     return res.status(500).json({
                         ok: false , 
-                        message: 'Error loading hospitals',
+                        message: 'Error loading medicos',
                         errors: err
                     });    
                 }
 
                 res.status(200).json({
                     ok: true , 
-                    hospitales: hospitales
+                    medicos: medicos
                 });
 
             }
         );
 
     
-
 });
 
 
- 
+
 // ==========================================================
-// PUT /hospital/:id    ( actualizar hospital por id)
+// PUT /medico/:id    ( actualizar medico por id)
 // ==========================================================
-app.put( '/:id', mdAuth.auth_verify_token, (req, res ) => {
+app.put( '/:id', mdAuth.auth_verify_token,  (req, res ) => {
 
     let id      = req.params.id;
     let body    = req.body;
     
 
     // Usando el modelo de mongoose
-    Hospital.findById( id , (err, hospitalEncontrado ) => {
+    Medico.findById( id , (err, medicoEncontrado ) => {
 
         
         if ( err ) {
@@ -60,35 +59,35 @@ app.put( '/:id', mdAuth.auth_verify_token, (req, res ) => {
             // 500 Internal Server error
             return res.status(500).json({
                 ok: false ,
-                message: 'Error al buscar hospital', 
+                message: 'Error al buscar medico', 
                 errors: err
             });    
         }
 
-        if (!hospitalEncontrado ) {
+        if (!medicoEncontrado ) {
             // The id does not exists ( 400 Bad Request )
             return res.status(400).json({
                 ok: false ,
-                message: 'El hospital con el id ' + id + ' no existe', 
+                message: 'El medico con el id ' + id + ' no existe', 
                 errors: err
                 
             });
         }
 
         // update field values
-        hospitalEncontrado.nombre    = body.nombre         ;
-        hospitalEncontrado.img       = body.img            ;
-
+        medicoEncontrado.nombre    = body.nombre         ;
+        medicoEncontrado.img       = body.img            ;
+        medicoEncontrado.hospital  = body.hospital_id    ;
 
         // saves into the database
-        hospitalEncontrado.save( (err, hospitalGuardado ) => {
+        medicoEncontrado.save( (err, medicoGuardado ) => {
 
             if ( err ) {
 
                 // 400 - Bad request error
                 return res.status(400).json({
                     ok: false , 
-                    message: 'Error updating hospital',
+                    message: 'Error updating medico',
                     errors: err
                 });    
             }
@@ -97,7 +96,7 @@ app.put( '/:id', mdAuth.auth_verify_token, (req, res ) => {
             // success code (200)
             res.status(200).json({
                 ok: true , 
-                hospital: hospitalGuardado
+                medico: medicoGuardado
             });
 
         });
@@ -109,23 +108,23 @@ app.put( '/:id', mdAuth.auth_verify_token, (req, res ) => {
 
 
 
-
+// 
 // ==========================================================
-// GET /usuario/:id    ( obtener usuario por id)
+// GET /medico/:id    ( obtener medico por id)
 // ==========================================================
 app.get( '/:id', mdAuth.auth_verify_token, (req, res ) => {
 
     const body = req.body;
 
     // Usando el modelo de mongoose
-    Hospital.find({ _id: req.params.id }, (err, hospitalEncontrado ) => {
+    Medico.find({ _id: req.params.id }, (err, medicoEncontrado ) => {
 
         if ( err ) {
 
             // 400 - Bad request error
             return res.status(400).json({
                 ok: false , 
-                message: 'Error getting hospital',
+                message: 'Error getting medico',
                 errors: err
             });    
         }
@@ -133,7 +132,7 @@ app.get( '/:id', mdAuth.auth_verify_token, (req, res ) => {
         // http successfull code  (200)
         res.status(200).json({
             ok: true , 
-            hospital: hospitalEncontrado
+            medico: medicoEncontrado
         });
 
     });
@@ -141,48 +140,48 @@ app.get( '/:id', mdAuth.auth_verify_token, (req, res ) => {
 });
 
 
+ 
 // ==========================================================
-// POST /hospital    ( create hospital - create hospital )
+// POST /medico    ( create medico - create medico )
 // ==========================================================
-app.post( '/',  mdAuth.auth_verify_token, (req, res ) => {
+app.post( '/', mdAuth.auth_verify_token,  (req, res ) => {
 
     const body = req.body;
 
-    
-    // NOTE
+
+       // NOTE
     // if I use postman without the authentication middleware ( skiping it )
     // I must provide the usuario - like this
     // If not I get the usuario from the authentication middleware in req.usuario._id
 
 /*
     // basado en el modelo de mongoose
-    const hospital = new Hospital({
+    const medico = new Medico({
         nombre: body.nombre ,
         img: body.img,
-        usuario: body.usuario_id
+        usuario: body.usuario_id,
+        hospital: body.hospital_id
     });
 */
 
-    // basado en el modelo de mongoose
     // I get the usuario from the authentication middleware in req.usuario._id
-    const hospital = new Hospital({
+    // basado en el modelo de mongoose
+    const medico = new Medico({
         nombre: body.nombre ,
         img: body.img,
-        usuario: req.usuario._id
+        usuario: req.usuario._id,
+        hospital: body.hospital_id
     });
-
-
-
     
     // saves into the database
-    hospital.save( (err, hospitalGuardado ) => {
+    medico.save( (err, medicoGuardado ) => {
 
         if ( err ) {
 
             // 400 - Bad request error
             return res.status(400).json({
                 ok: false , 
-                message: 'Error saving hospital',
+                message: 'Error saving medico',
                 errors: err
             });    
         }
@@ -190,7 +189,7 @@ app.post( '/',  mdAuth.auth_verify_token, (req, res ) => {
         // object created code (201)
         res.status(201).json({
             ok: true , 
-            hospital: hospitalGuardado
+            medico: medicoGuardado
         });
 
     });
@@ -200,10 +199,8 @@ app.post( '/',  mdAuth.auth_verify_token, (req, res ) => {
 
 
 
-
-
 // ==========================================================
-// DELETE /hospital/:id    ( borrar hospital por id)
+// DELETE /medico/:id    ( borrar medico por id)
 // ==========================================================
 app.delete( '/:id', mdAuth.auth_verify_token, (req, res ) => {
 
@@ -211,7 +208,7 @@ app.delete( '/:id', mdAuth.auth_verify_token, (req, res ) => {
     
 
     // Usando el modelo de mongoose
-    Hospital.findByIdAndRemove( id , (err, hospitalBorrado ) => {
+    Medico.findByIdAndRemove( id , (err, medicoBorrado ) => {
 
         
         if ( err ) {
@@ -219,17 +216,17 @@ app.delete( '/:id', mdAuth.auth_verify_token, (req, res ) => {
             // 500 Internal Server error
             return res.status(500).json({
                 ok: false ,
-                message: 'Error al borrar hospital', 
+                message: 'Error al borrar medico', 
                 errors: err
             });    
         }
         
-        if (!hospitalBorrado ) {
+        if (!medicoBorrado ) {
             // The id does not exists ( 400 Bad Request )
             return res.status(400).json({
                 ok: false ,
-                message: 'El hospital con el id ' + id + ' no existe', 
-                errors: { message: 'No esiste un hospital con ese ID'}
+                message: 'El medico con el id ' + id + ' no existe', 
+                errors: { message: 'No esiste un medico con ese ID'}
                 
             });
         }
@@ -237,7 +234,7 @@ app.delete( '/:id', mdAuth.auth_verify_token, (req, res ) => {
         // success code (200)
         res.status(200).json({
             ok: true , 
-            hospital: hospitalBorrado
+            medico: medicoBorrado
         });
 
     });

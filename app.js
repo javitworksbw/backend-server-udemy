@@ -32,6 +32,8 @@ const appRoutes      = require('./routes/app');
 const usuarioRoutes  = require('./routes/usuario');
 const loginRoutes    = require('./routes/login');
 const hospitalRoutes = require('./routes/hospital');
+const medicoRoutes   = require('./routes/medico');
+
 
 
 // Conexion a la base de datos
@@ -54,7 +56,8 @@ db.once('open', function() {
 // Routes
 app.use('/usuario'      , usuarioRoutes         );
 app.use('/login'        , loginRoutes           );
-app.use('/hospital'     , hospitalRoute         );
+app.use('/hospital'     , hospitalRoutes        );
+app.use('/medico'       , medicoRoutes          );
 app.use('/'             , appRoutes             );
 
 
