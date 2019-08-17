@@ -9,14 +9,17 @@ const corsOptions           = require('../middlewares/corsOptions');
 const app = express();
 
 
-// User model
-const Usuario = require('../models/usuario');
+// Hospital model
+const Hospital = require('../models/hospital');
 
 // ==========================================================
-// GET /usuario    ( obtener todos los usuarios )
+// GET /hospital    ( obtener todos los hospitales )
 // ==========================================================
 app.get( '/', cors(corsOptions), (req, res ) => {
 
+    
+
+/*
     // Usando el modelo de mongoose
     Usuario.find({ }, 'nombre email img role' )
     .exec(
@@ -37,7 +40,7 @@ app.get( '/', cors(corsOptions), (req, res ) => {
 
             }
         );
-
+*/
     
 
 });
@@ -47,6 +50,7 @@ app.get( '/', cors(corsOptions), (req, res ) => {
 // ==========================================================
 // PUT /usuario/:id    ( actualizar usuario por id)
 // ==========================================================
+/*
 app.put( '/:id', mdAuth.auth_verify_token, (req, res ) => {
 
     let id      = req.params.id;
@@ -236,5 +240,6 @@ app.delete( '/:id', mdAuth.auth_verify_token, (req, res ) => {
     });
 
 });
+*/
 
 module.exports = app;

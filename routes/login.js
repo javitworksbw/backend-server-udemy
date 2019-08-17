@@ -35,7 +35,7 @@ app.post( '/', (req, res ) => {
             // The id does not exists ( 400 Bad Request )
             return res.status(400).json({
                 ok: false ,
-                mensaje: 'Invalid login values -- email', 
+                message: 'Invalid login values -- email', 
                 errors: err
                 
             });
@@ -49,7 +49,7 @@ app.post( '/', (req, res ) => {
             // The password is not valid ( 400 Bad Request )
             return res.status(400).json({
                 ok: false ,
-                mensaje: 'Invalid login values -- password', 
+                message: 'Invalid login values -- password', 
                 errors: err
                 
             });
@@ -61,14 +61,15 @@ app.post( '/', (req, res ) => {
         // Create token 
         const token = jwt.sign({ usuario: usuarioEncontrado  }, 
                                 SEED,
-                                { expiresIn: '2h' });
+                                { expiresIn: '4h' });
 
 
         // http successfull code  (200)
         res.status(200).json({
             ok: true , 
             usuario: usuarioEncontrado,
-            token: token
+            token: token,
+            id: usuarioEncontrado._id
         });
 
     });
