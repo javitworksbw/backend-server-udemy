@@ -22,5 +22,5 @@ const hospitalSchema = new mongoose.Schema({
 hospitalSchema.plugin( uniqueValidator , { message: 'El {PATH} debe ser unico'});
 
 // User model based on hospitalSchema
-module.exports = mongoose.model('hospital', hospitalSchema);
+module.exports = mongoose.model('hospitales', hospitalSchema);
 

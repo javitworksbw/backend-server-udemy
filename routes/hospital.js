@@ -17,6 +17,7 @@ app.get( '/', cors(corsOptions), (req, res ) => {
 
     // Usando el modelo de mongoose
     Hospital.find({ }, 'nombre img usuario' )
+    .populate('usuario', 'nombre email')
     .exec(
             (err, hospitales)=> {
                 
