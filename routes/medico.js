@@ -15,8 +15,17 @@ const Medico = require('../models/medico');
 app.get( '/', cors(corsOptions), (req, res ) => {
 
 
+    // Creating the pagination
+
+    // desde
+    let offset = req.query.offset || 0;
+    offset = Number(offset);
+
+       
     // Usando el modelo de mongoose
     Medico.find({ }, 'nombre img usuario hospital' )
+    .skip(offset)
+    .limit(5)
     .populate('usuario', 'nombre email')
     .populate('hospital')
     .exec(
@@ -30,10 +39,25 @@ app.get( '/', cors(corsOptions), (req, res ) => {
                     });    
                 }
 
-                res.status(200).json({
-                    ok: true , 
-                    medicos: medicos
+                // Returns the number of registers ( count registers )
+                Medico.count({}, (err, count)=> {
+                    
+                    if ( err ) {
+                        return res.status(500).json({
+                            ok: false , 
+                            message: 'Error counting medicos in pagination',
+                            errors: err
+                        });    
+                    }
+
+                    res.status(200).json({
+                        ok: true , 
+                        medicos: medicos,
+                        count: count
+                    });
+
                 });
+                
 
             }
         );

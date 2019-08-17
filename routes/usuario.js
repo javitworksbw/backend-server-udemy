@@ -17,8 +17,16 @@ const Usuario = require('../models/usuario');
 // ==========================================================
 app.get( '/', cors(corsOptions), (req, res ) => {
 
+    // Creating the pagination
+    
+    // desde
+    let offset = req.query.offset || 0;
+    offset = Number(offset);
+
     // Usando el modelo de mongoose
     Usuario.find({ }, 'nombre email img role' )
+    .skip(offset)
+    .limit(5)
     .exec(
             (err, usuarios)=> {
                 
@@ -30,10 +38,25 @@ app.get( '/', cors(corsOptions), (req, res ) => {
                     });    
                 }
 
-                res.status(200).json({
-                    ok: true , 
-                    usuarios: usuarios
+                // Returns the number of registers ( count registers )
+                Usuario.count({}, (err, count)=> {
+                    
+                    if ( err ) {
+                        return res.status(500).json({
+                            ok: false , 
+                            message: 'Error counting users in pagination',
+                            errors: err
+                        });    
+                    }
+
+                    res.status(200).json({
+                        ok: true , 
+                        usuarios: usuarios,
+                        count: count
+                    });
+
                 });
+                
 
             }
         );

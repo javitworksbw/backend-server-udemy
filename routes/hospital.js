@@ -14,9 +14,17 @@ const Hospital = require('../models/hospital');
 // ==========================================================
 app.get( '/', cors(corsOptions), (req, res ) => {
 
+    // Creating the pagination
+
+    // desde
+    let offset = req.query.offset || 0;
+    offset = Number(offset);
+
 
     // Usando el modelo de mongoose
     Hospital.find({ }, 'nombre img usuario' )
+    .skip(offset)
+    .limit(5)
     .populate('usuario', 'nombre email')
     .exec(
             (err, hospitales)=> {
@@ -29,9 +37,23 @@ app.get( '/', cors(corsOptions), (req, res ) => {
                     });    
                 }
 
-                res.status(200).json({
-                    ok: true , 
-                    hospitales: hospitales
+                // Returns the number of registers ( count registers )
+                Hospital.count({}, (err, count)=> {
+                    
+                    if ( err ) {
+                        return res.status(500).json({
+                            ok: false , 
+                            message: 'Error counting hospitales in pagination',
+                            errors: err
+                        });    
+                    }
+
+                    res.status(200).json({
+                        ok: true , 
+                        hospitales: hospitales,
+                        count: count
+                    });
+
                 });
 
             }
