@@ -33,6 +33,7 @@ const usuarioRoutes  = require('./routes/usuario');
 const loginRoutes    = require('./routes/login');
 const hospitalRoutes = require('./routes/hospital');
 const medicoRoutes   = require('./routes/medico');
+const searchRoutes   = require('./routes/search');
 
 
 
@@ -58,6 +59,8 @@ app.use('/usuario'      , usuarioRoutes         );
 app.use('/login'        , loginRoutes           );
 app.use('/hospital'     , hospitalRoutes        );
 app.use('/medico'       , medicoRoutes          );
+app.use('/search'       , searchRoutes          );
+
 app.use('/'             , appRoutes             );
 
 
